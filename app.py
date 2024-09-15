@@ -1,48 +1,33 @@
-import feedparser
-import webbrowser
 import os
 from telethon import TelegramClient, events, sync
 from telethon.tl.functions.messages import ImportChatInviteRequest
+import logging
+logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
+                    level=logging.WARNING)
 
-# These example values won't work. You must get your own api_id and
-# api_hash from https://my.telegram.org, under API Development.
 api_id = os.environ.get("API_ID")
 api_hash = os.environ.get("API_HASH")
 bot_token = os.environ.get("BOT_TOKEN")
 
 client = TelegramClient('teste_betting_bot', api_id, api_hash).start(bot_token=bot_token)
 
-async def main():
-    # Getting information about yourself
-    me = await client.get_me()
+read_messages_entity = None
+send_messages_entity = None
 
-    # "me" is a user object. You can pretty-print
-    # any Telegram object with the "stringify" method:
-    print(me.stringify())
-
-    # When you print something, you see a representation of it.
-    # You can access all attributes of Telegram objects with
-    # the dot operator. For example, to get the username:
-    username = me.username
-    print(username)
-    print(me.phone)
-
-    # You can print all the dialogs/conversations that you are part of:
-    # async for dialog in client.iter_dialogs():
-    #     print(dialog.name, 'has ID', dialog.id)
-
-    # ...or even to any username
-    await client.send_message('thu_ilario', 'Testing Telethon!')
-
-
-@client.on(events.NewMessage)
-async def my_event_handler(event):
-    if 'hello' in event.raw_text:
-        await event.reply('hi!')
+@client.on(events.NewMessage(incoming=True, pattern='(?i)hello.+'))
+async def print_chat_id(event):
+    await event.reply('hi!')
     id = event.chat_id
     print(id)
 
-# Group ID = -1002202130484
+@client.on(events.NewMessage(incoming=True, pattern='COPY.+'))
+async def read_and_post_messages(event):
+    if event.chat_id == -4588254743:
+        await client.send_message(-1002202130484, event.raw_text)
+
+# Group ID = -1002202130484 (molina)
+# Group ID = -4588254743 (le mensagem)
 with client:
-    client.loop.run_until_complete(main())
+    read_messages_entity = await client.get_entity(some_id)
+    send_messages_entity = await client.get_entity(some_id)
     client.run_until_disconnected()
