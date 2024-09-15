@@ -26,10 +26,10 @@ async def print_chat_id(event):
 @client.on(events.NewMessage(incoming=True, pattern='COPY.+'))
 async def read_and_post_messages(event):
     if event.chat_id == -4588254743:
-        await client.send_message(send_messages_entity, event.raw_text)
+        await client.send_message(-1002202130484, event.raw_text)
 
 # Group ID = -1002202130484 (molina)
 # Group ID = -4588254743 (le mensagem)
 with client:
-    client.loop.run_until_complete(setup())
+    #client.loop.run_until_complete(setup())
     client.run_until_disconnected()
