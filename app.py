@@ -31,5 +31,5 @@ async def read_and_post_messages(event):
 # Group ID = -1002202130484 (molina)
 # Group ID = -4588254743 (le mensagem)
 with client:
-    client.loop.run_until_complete(setup)
+    client.loop.run_until_complete(setup())
     client.run_until_disconnected()
