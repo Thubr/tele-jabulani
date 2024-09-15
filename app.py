@@ -11,8 +11,11 @@ bot_token = os.environ.get("BOT_TOKEN")
 
 client = TelegramClient('teste_betting_bot', api_id, api_hash).start(bot_token=bot_token)
 
-read_messages_entity = None
-send_messages_entity = None
+async def setup():
+    global read_messages_entity
+    global send_messages_entity
+    read_messages_entity = await client.get_entity(-4588254743)
+    send_messages_entity = await client.get_input_entity(-1002202130484)
 
 @client.on(events.NewMessage(incoming=True, pattern='(?i)hello.+'))
 async def print_chat_id(event):
@@ -23,11 +26,10 @@ async def print_chat_id(event):
 @client.on(events.NewMessage(incoming=True, pattern='COPY.+'))
 async def read_and_post_messages(event):
     if event.chat_id == -4588254743:
-        await client.send_message(-1002202130484, event.raw_text)
+        await client.send_message(send_messages_entity, event.raw_text)
 
 # Group ID = -1002202130484 (molina)
 # Group ID = -4588254743 (le mensagem)
 with client:
-    read_messages_entity = await client.get_entity(some_id)
-    send_messages_entity = await client.get_entity(some_id)
+    client.loop.run_until_complete(setup)
     client.run_until_disconnected()
